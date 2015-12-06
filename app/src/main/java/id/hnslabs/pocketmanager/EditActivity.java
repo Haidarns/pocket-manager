@@ -30,6 +30,7 @@ public class EditActivity extends AppCompatActivity {
     private Spinner typeSpinIn, typeSpinOut;
     private DBHelper db;
     private SharedPreferences sharedpreferences;
+    private InOutTransModel model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +54,7 @@ public class EditActivity extends AppCompatActivity {
 
         if (!actMode) {
             int dataId = getIntent().getIntExtra("dataId", 0);
-            InOutTransModel model = getData(dataId);
+            model = getData(dataId);
 
             addMode = model.getInOut();
             editNominal.setText(String.valueOf(model.getJumlah()));
@@ -111,13 +112,22 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private int getCountForId(){
-        int prevId = sharedpreferences.getInt("count",0);
+        int prevId = sharedpreferences.getInt("count", 0);
 
         SharedPreferences.Editor editor= sharedpreferences.edit();
         editor.putInt("count", prevId + 1);
         editor.commit();
 
         return prevId+1;
+    }
+
+    private void deleteData(int id){
+        Realm realm = Realm.getInstance(getApplicationContext());
+        realm.beginTransaction();
+        InOutTransModel modelS = realm.where(InOutTransModel.class).equalTo("id",id).findFirst();
+        modelS.removeFromRealm();
+        realm.commitTransaction();
+        realm.close();
     }
 
     private void saveData(){
@@ -137,23 +147,31 @@ public class EditActivity extends AppCompatActivity {
             Toast.makeText(EditActivity.this, "Tolong isi semua kolom", Toast.LENGTH_SHORT).show();
         } else {
             //InOutTransModel model = new InOutTransModel();
-
+            InOutTransModel modelS;
+            int idI = getCountForId();
+            String tglS = tahun + "/" + bulan + "/" + hari + "-" + jam + ":" + menit + ":"+ sec;
             Float nominalF    = Float.parseFloat(nominal);
+
+            if(model!=null){
+                idI = model.getId();
+                tglS = model.getCreatedTime();
+                deleteData(idI);
+            }
 
             Realm realm = Realm.getInstance(this);
             realm.beginTransaction();
-            InOutTransModel model = realm.createObject(InOutTransModel.class);
-            model.setId(getCountForId());
-            model.setInOut(actMode);
-            model.setJumlah(nominalF);
-            model.setKeterangan(keterangan);
-            model.setJenisInOut(jenis);
-            model.setCreatedTime(hari + "/" + bulan + "/" + tahun + "-" + jam + ":" + menit + ":"+ sec);
+            modelS = realm.createObject(InOutTransModel.class);
+            modelS.setId(getCountForId());
+            modelS.setInOut(addMode);
+            modelS.setJumlah(nominalF);
+            modelS.setKeterangan(keterangan);
+            modelS.setJenisInOut(jenis);
+            modelS.setCreatedTime(tglS);
             realm.commitTransaction();
-
+            realm.close();
             //db.inputData(model);
 
-            Toast.makeText(EditActivity.this, "Sukses menambahkan data."+model.getId(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(EditActivity.this, "Sukses menambahkan data."+modelS.getId(), Toast.LENGTH_SHORT).show();
 
             finish();
         }
@@ -188,6 +206,8 @@ public class EditActivity extends AppCompatActivity {
                 supportInvalidateOptionsMenu();
                 return true;
             case R.id.action_delete :
+                deleteData(model.getId());
+                finish();
                 return true;
         }
 

@@ -38,22 +38,6 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         */
 
-        //db = new DBHelper(this);
-        results = getAllData();
-
-        //ListView lv = (ListView) findViewById(R.id.main_list_id);
-        //lv.setAdapter(new ListCusAdapter(getApplicationContext(), getAllData(), true));
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        adapter = new RecViewAdapter(results);
-
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(adapter);
-        //recyclerView.setVerticalFadingEdgeEnabled(true);
-        //recyclerView.setFadingEdgeLength(30);
-        //recyclerView.setFocusable(true);
-
         final FloatingActionsMenu fabMen = (FloatingActionsMenu) findViewById(R.id.right_labels);
         final FloatingActionButton fabIn = (FloatingActionButton) findViewById(R.id.fabIncome);
         final FloatingActionButton fabOut = (FloatingActionButton) findViewById(R.id.fabOutcome);
@@ -95,16 +79,27 @@ public class MainActivity extends AppCompatActivity
     private RealmResults<InOutTransModel> getAllData(){
         Realm realm = Realm.getInstance(getApplicationContext());
         RealmResults<InOutTransModel> tmpData = realm.where(InOutTransModel.class).findAll();
+        tmpData.sort("createdTime",true);
         return tmpData;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        results = getAllData();
+
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        adapter = new RecViewAdapter(results);
+
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+
         ((RecViewAdapter) adapter).setOnItemClickListener(new RecViewAdapter.RecViewClickListener() {
             @Override
             public void onItemClick(int position, View v) {
-                Log.i("Recycler Click", "Target : "+results.get(position).getId());
+                Log.i("Recycler Click", "Target : " + results.get(position).getId());
                 Intent it = new Intent(getApplicationContext(), EditActivity.class);
                 it.putExtra("actMode", EditActivity.LIHAT);
                 it.putExtra("dataId", results.get(position).getId());
