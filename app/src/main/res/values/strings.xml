@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Pocket Manager</string>
+    <string name="income">Pemasukan</string>
+    <string name="outcome">Pengeluaran</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_save">Simpan</string>
+    <string name="action_edit">Ubah</string>
+    <string name="action_delete">Hapus</string>
+
+    <string-array name="outcome_str_array">
+        <item>Kebutuhan Sehari-hari</item>
+        <item>Edukasi</item>
+        <item>Makanan/Minuman</item>
+        <item>Kesehatan</item>
+        <item>Hobi</item>
+        <item>Perseorangan</item>
+        <item>Transportasi</item>
+        <item>Transfer</item>
+        <item>Lainnya</item>
+    </string-array>
+
+    <string-array name="income_str_array">
+        <item>Gaji</item>
+        <item>Hadiah</item>
+        <item>Transfer</item>
+        <item>Pinjaman</item>
+        <item>Lainnya</item>
+    </string-array>
+</resources>

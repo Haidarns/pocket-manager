@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF9800</color>
+    <color name="half_black">#808080</color>
+    <color name="white">#fafafa</color>
+    <color name="white_pressed">#f1f1f1</color>
+    <color name="fab_background">#77000000</color>
+    <color name="black_semi_transparent">#B2000000</color>
+
+    <color name="income">#4CAF50</color>
+    <color name="income_dark">#388E3C</color>
+    <color name="outcome">#F44336</color>
+    <color name="outcome_dark">#D32F2F</color>
+</resources>

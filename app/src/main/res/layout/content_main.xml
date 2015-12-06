@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="id.hnslabs.pocketmanager.MainActivity"
+    tools:showIn="@layout/app_bar_main"
+    android:orientation="vertical"
+    android:background="#eeeeee">
+    <RelativeLayout
+        android:id="@+id/sticky_main"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/income">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Keuangan"
+            android:textColor="@color/abc_primary_text_material_dark"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:id="@+id/textView4"
+            android:textStyle="italic" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rp 13.000,-"
+            android:textColor="@color/abc_primary_text_material_dark"
+            android:textSize="40sp"
+            android:id="@+id/balanceTv"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:textStyle="bold"
+            android:paddingTop="10dp" />
+
+    </RelativeLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:requiresFadingEdge="vertical"
+        android:fadingEdgeLength="10dp"
+        android:background="@color/fab_background"
+        />
+
+    <!--ListView
+        android:id="@+id/main_list_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="#00ffffff"
+        android:visibility="visible" /-->
+</LinearLayout>
