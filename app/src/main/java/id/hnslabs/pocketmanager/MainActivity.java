@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity
     private RealmResults<InOutTransModel> getAllData(){
         Realm realm = Realm.getInstance(getApplicationContext());
         RealmResults<InOutTransModel> tmpData = realm.where(InOutTransModel.class).findAll();
-        tmpData.sort("createdTime", true);
+        tmpData.sort("id", true);
         return tmpData;
     }
 
@@ -166,9 +166,11 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_history) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_stats) {
+            Intent it = new Intent(MainActivity.this, StatistikActivity.class);
+            startActivity(it);
 
         } else if (id == R.id.nav_slideshow) {
 

@@ -46,7 +46,7 @@
         android:scrollbars="vertical"
         android:requiresFadingEdge="vertical"
         android:fadingEdgeLength="10dp"
-        android:background="@color/fab_background"
+        android:background="#e0e0e0"
         />
 
     <!--ListView
