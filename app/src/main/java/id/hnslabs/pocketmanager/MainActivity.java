@@ -11,9 +11,15 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import id.hnslabs.pocketmanager.Adapter.RecViewAdapter;
 import id.hnslabs.pocketmanager.Model.InOutTransModel;
@@ -79,8 +85,23 @@ public class MainActivity extends AppCompatActivity
     private RealmResults<InOutTransModel> getAllData(){
         Realm realm = Realm.getInstance(getApplicationContext());
         RealmResults<InOutTransModel> tmpData = realm.where(InOutTransModel.class).findAll();
-        tmpData.sort("createdTime",true);
+        tmpData.sort("createdTime", true);
         return tmpData;
+    }
+
+    private float getBalance(RealmResults<InOutTransModel> datas){
+        float temp = 0f;
+        InOutTransModel tempM;
+        for (int i = 0; i < datas.size(); i++) {
+            tempM = datas.get(i);
+            if(tempM.getInOut()) {
+                temp += tempM.getJumlah();
+            } else {
+                temp -= tempM.getJumlah();
+            }
+        }
+
+        return temp;
     }
 
     @Override
@@ -91,6 +112,27 @@ public class MainActivity extends AppCompatActivity
         layoutManager = new LinearLayoutManager(this);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         adapter = new RecViewAdapter(results);
+        RelativeLayout rl = (RelativeLayout) findViewById(R.id.sticky_main);
+
+        String mataUang = "Rp ";
+        float nominal = getBalance(results);
+
+        if(nominal > 0){
+            rl.setBackgroundColor(getResources().getColor(R.color.income));
+        } else if ( nominal < 0) {
+            rl.setBackgroundColor(getResources().getColor(R.color.outcome));
+        } else {
+            rl.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        }
+
+        NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
+        DecimalFormat df = (DecimalFormat)nf;
+        String nominalFormat = df.format(nominal);
+
+        String balTmp = mataUang + nominalFormat;
+
+        TextView balanceTV = (TextView) findViewById(R.id.balanceTv);
+        balanceTV.setText(balTmp);
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
@@ -104,7 +146,6 @@ public class MainActivity extends AppCompatActivity
                 it.putExtra("actMode", EditActivity.LIHAT);
                 it.putExtra("dataId", results.get(position).getId());
                 startActivity(it);
-
             }
         });
     }

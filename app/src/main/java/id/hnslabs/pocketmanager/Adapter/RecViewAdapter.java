@@ -8,6 +8,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
+
 import id.hnslabs.pocketmanager.Model.IconManager;
 import id.hnslabs.pocketmanager.Model.InOutTransModel;
 import id.hnslabs.pocketmanager.R;
@@ -70,7 +74,11 @@ public class RecViewAdapter extends RecyclerView.Adapter<RecViewAdapter.RealmHol
             holder.icon.setImageResource(IconManager.getIconResId(IconManager.TYPE_OUTCOME, stringId));
         }
 
-        holder.nominal.setText(String.valueOf(obj.getJumlah()));
+        NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
+        DecimalFormat df = (DecimalFormat)nf;
+        String nominalFormat = "Rp "+ df.format(obj.getJumlah());
+
+        holder.nominal.setText(nominalFormat);
         holder.keterangan.setText(obj.getKeterangan());
     }
 

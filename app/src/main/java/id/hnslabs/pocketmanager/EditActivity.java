@@ -10,10 +10,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 import java.util.Calendar;
 
 import id.hnslabs.pocketmanager.Model.InOutTransModel;
@@ -103,7 +105,7 @@ public class EditActivity extends AppCompatActivity {
 
     private int getSpinnerItemId(){
         int temp = 0;
-        if(actMode){
+        if(addMode){
             temp = (int) typeSpinIn.getSelectedItemId();
         } else {
             temp = (int) typeSpinOut.getSelectedItemId();
@@ -116,7 +118,7 @@ public class EditActivity extends AppCompatActivity {
 
         SharedPreferences.Editor editor= sharedpreferences.edit();
         editor.putInt("count", prevId + 1);
-        editor.commit();
+        editor.apply();
 
         return prevId+1;
     }
@@ -139,7 +141,7 @@ public class EditActivity extends AppCompatActivity {
         int bulan = cal.get(Calendar.MONTH)+1;
         int tahun = cal.get(Calendar.YEAR);
 
-        String nominal    = editNominal.getText().toString();
+        String nominal = editNominal.getText().toString();
         String keterangan = editKet.getText().toString();
         int jenis         = getSpinnerItemId();
 
@@ -148,30 +150,30 @@ public class EditActivity extends AppCompatActivity {
         } else {
             //InOutTransModel model = new InOutTransModel();
             InOutTransModel modelS;
-            int idI = getCountForId();
-            String tglS = tahun + "/" + bulan + "/" + hari + "-" + jam + ":" + menit + ":"+ sec;
+            int idPrev = getCountForId();
+            String tglPrev = tahun + "/" + bulan + "/" + hari + "-" + jam + ":" + menit + ":"+ sec;
             Float nominalF    = Float.parseFloat(nominal);
 
             if(model!=null){
-                idI = model.getId();
-                tglS = model.getCreatedTime();
-                deleteData(idI);
+                idPrev = model.getId();
+                tglPrev = model.getCreatedTime();
+                deleteData(idPrev);
             }
 
             Realm realm = Realm.getInstance(this);
             realm.beginTransaction();
             modelS = realm.createObject(InOutTransModel.class);
-            modelS.setId(getCountForId());
+            modelS.setId(idPrev);
             modelS.setInOut(addMode);
             modelS.setJumlah(nominalF);
             modelS.setKeterangan(keterangan);
             modelS.setJenisInOut(jenis);
-            modelS.setCreatedTime(tglS);
+            modelS.setCreatedTime(tglPrev);
             realm.commitTransaction();
             realm.close();
             //db.inputData(model);
 
-            Toast.makeText(EditActivity.this, "Sukses menambahkan data."+modelS.getId(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(EditActivity.this, "Sukses menambahkan data."+modelS.getInOut()+modelS.getJenisInOut(), Toast.LENGTH_SHORT).show();
 
             finish();
         }
