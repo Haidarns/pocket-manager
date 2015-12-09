@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_show_income"
+        android:icon="@drawable/ic_type_other_in"
+        android:menuCategory="secondary"
+        app:showAsAction="always"
+        android:title="Pemasukan"/>
+    <item
+        android:id="@+id/action_show_outcome"
+        android:icon="@drawable/ic_type_other_out"
+        android:menuCategory="secondary"
+        app:showAsAction="always"
+        android:title="Pengeluaran"/>
+</menu>

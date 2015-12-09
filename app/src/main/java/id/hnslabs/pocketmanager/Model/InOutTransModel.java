@@ -14,7 +14,7 @@ public class InOutTransModel extends RealmObject{
     private String keterangan, createdTime;
     private int jenisInOut;
 
-    //format tanggal = dd/mm/yyyy
+    //format createdTime = yyyy/mm/dd
 
     public int getId() {
         return id;

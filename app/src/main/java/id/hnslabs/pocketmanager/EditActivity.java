@@ -30,7 +30,6 @@ public class EditActivity extends AppCompatActivity {
     private boolean actMode, addMode;
     private EditText editNominal, editKet;
     private Spinner typeSpinIn, typeSpinOut;
-    private DBHelper db;
     private SharedPreferences sharedpreferences;
     private InOutTransModel model;
 
@@ -49,8 +48,6 @@ public class EditActivity extends AppCompatActivity {
         editKet     = (EditText) findViewById(R.id.input_ket);
         typeSpinIn    = (Spinner) findViewById(R.id.spinnerIn);
         typeSpinOut    = (Spinner) findViewById(R.id.spinnerOut);
-
-        db = new DBHelper(this);
 
         enableEdit(true);
 
@@ -145,7 +142,7 @@ public class EditActivity extends AppCompatActivity {
         String keterangan = editKet.getText().toString();
         int jenis         = getSpinnerItemId();
 
-        if (nominal.isEmpty() || keterangan.isEmpty()){
+        if (nominal.isEmpty()){
             Toast.makeText(EditActivity.this, "Tolong isi semua kolom", Toast.LENGTH_SHORT).show();
         } else {
             //InOutTransModel model = new InOutTransModel();

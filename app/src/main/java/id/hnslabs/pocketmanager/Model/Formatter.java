@@ -1,11 +1,14 @@
 package id.hnslabs.pocketmanager.Model;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+
 import id.hnslabs.pocketmanager.R;
 
 /**
  * Created by HaidarNS on 05/12/2015.
  */
-public class IconManager {
+public class Formatter {
     public static final boolean TYPE_INCOME = true;
     public static final boolean TYPE_OUTCOME = false;
 
@@ -33,5 +36,17 @@ public class IconManager {
             }
         }
         return tmpId;
+    }
+
+    public static String currencyFormatter(float nominal){
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setDecimalSeparator(',');
+        symbols.setGroupingSeparator('.');
+
+        DecimalFormat df = new DecimalFormat("#,###.00", symbols);
+
+        String tmpStr = "Rp " + df.format(nominal);
+
+        return tmpStr;
     }
 }

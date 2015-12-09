@@ -50,6 +50,17 @@
             android:layout_toEndOf="@+id/cuslist_main_icon"
             android:textSize="12sp"
             android:textColor="@color/abc_secondary_text_material_light" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="07/12"
+            android:id="@+id/cuslist_main_tanggal"
+            android:layout_gravity="right|top"
+            android:layout_alignParentTop="true"
+            android:textSize="10sp"
+            android:layout_alignParentRight="true" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>
+
 </FrameLayout>

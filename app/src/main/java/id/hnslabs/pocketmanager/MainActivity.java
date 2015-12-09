@@ -18,10 +18,12 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
 
 import id.hnslabs.pocketmanager.Adapter.RecViewAdapter;
+import id.hnslabs.pocketmanager.Model.Formatter;
 import id.hnslabs.pocketmanager.Model.InOutTransModel;
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -32,6 +34,8 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
+    private RelativeLayout rl;
+    private TextView balanceTV;
 
     private RealmResults<InOutTransModel> results;
 
@@ -43,6 +47,11 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         */
+
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        rl = (RelativeLayout) findViewById(R.id.sticky_main);
+        balanceTV = (TextView) findViewById(R.id.balanceTv);
 
         final FloatingActionsMenu fabMen = (FloatingActionsMenu) findViewById(R.id.right_labels);
         final FloatingActionButton fabIn = (FloatingActionButton) findViewById(R.id.fabIncome);
@@ -108,13 +117,8 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         results = getAllData();
+        adapter = new RecViewAdapter(results, MainActivity.this);
 
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        adapter = new RecViewAdapter(results);
-        RelativeLayout rl = (RelativeLayout) findViewById(R.id.sticky_main);
-
-        String mataUang = "Rp ";
         float nominal = getBalance(results);
 
         if(nominal > 0){
@@ -125,13 +129,8 @@ public class MainActivity extends AppCompatActivity
             rl.setBackgroundColor(getResources().getColor(R.color.colorAccent));
         }
 
-        NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
-        DecimalFormat df = (DecimalFormat)nf;
-        String nominalFormat = df.format(nominal);
+        String balTmp = Formatter.currencyFormatter(nominal);
 
-        String balTmp = mataUang + nominalFormat;
-
-        TextView balanceTV = (TextView) findViewById(R.id.balanceTv);
         balanceTV.setText(balTmp);
 
         recyclerView.setHasFixedSize(true);
