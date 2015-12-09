@@ -170,7 +170,7 @@ public class EditActivity extends AppCompatActivity {
             realm.close();
             //db.inputData(model);
 
-            Toast.makeText(EditActivity.this, "Sukses menambahkan data."+modelS.getInOut()+modelS.getJenisInOut(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(EditActivity.this, "Sukses menambahkan data.", Toast.LENGTH_SHORT).show();
 
             finish();
         }

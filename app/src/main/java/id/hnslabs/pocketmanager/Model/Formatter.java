@@ -43,7 +43,7 @@ public class Formatter {
         symbols.setDecimalSeparator(',');
         symbols.setGroupingSeparator('.');
 
-        DecimalFormat df = new DecimalFormat("#,###.00", symbols);
+        DecimalFormat df = new DecimalFormat("#,##0.##", symbols);
 
         String tmpStr = "Rp " + df.format(nominal);
 

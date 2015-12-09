@@ -10,32 +10,35 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RelativeLayout;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 
 import id.hnslabs.pocketmanager.Adapter.RecViewAdapter;
-import id.hnslabs.pocketmanager.Model.Formatter;
 import id.hnslabs.pocketmanager.Model.InOutTransModel;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class StatistikActivity extends AppCompatActivity {
+public class StatsPieActivity extends AppCompatActivity {
     private boolean showMode = true; //true = income, false = outcome
     private Realm realm;
     private List<String> xVals;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
-    private LineChart chart;
+    private PieChart chart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,27 +47,32 @@ public class StatistikActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        LineChart lc = (LineChart) findViewById(R.id.chart);
+        lc.setVisibility(View.GONE);
+
         realm = Realm.getInstance(getApplicationContext());
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         getSupportActionBar().setTitle("Statistik Pemasukan");
 
-        layoutManager = new LinearLayoutManager(this);
+        //layoutManager = new LinearLayoutManager(this);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        chart = (LineChart) findViewById(R.id.chart);
+        recyclerView.setVisibility(View.GONE);
+
+        chart = (PieChart) findViewById(R.id.chart_pie);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        createLineChart(showMode);
-        createRecViewList(separateDataInOut(true));
+        createPieChart(showMode);
+        //createRecViewList(separateDataInOut(showMode));
     }
 
     private void createRecViewList(final RealmResults<InOutTransModel> results){
 
-        adapter = new RecViewAdapter(results, StatistikActivity.this);
+        adapter = new RecViewAdapter(results, StatsPieActivity.this);
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
@@ -82,42 +90,39 @@ public class StatistikActivity extends AppCompatActivity {
         });
     }
 
-    private void createLineChart(boolean mode){
-        LineData data;
-        LineDataSet lds;
+    private void createPieChart(boolean mode){
+        PieData data;
+        PieDataSet pds;
 
         if(mode) {
-            lds = getDataSet(separateDataInOut(true),true);
+            pds = getDataSet(separateDataInOut(true),true);
             //chart.setDescription("Chart Pemasukan");
         } else {
-            lds = getDataSet(separateDataInOut(false), false);
+            pds = getDataSet(separateDataInOut(false), false);
             //chart.setDescription("Chart Pengeluaran");
         }
 
-        data = new LineData(xVals, lds);
+        pds.setDrawValues(false);
 
-        chart.getAxisLeft().setDrawLabels(false);
-        chart.getAxisRight().setDrawLabels(false);
-
-        Legend legend = chart.getLegend();
-        legend.setEnabled(false);
+        data = new PieData(xVals, pds);
 
         chart.setTouchEnabled(false);
-        chart.setDragEnabled(false);
-        chart.setPinchZoom(false);
-        chart.setDrawGridBackground(false);
         chart.setData(data);
         chart.animateY(1000);
         chart.setDescription(" ");
         chart.invalidate();
     }
 
-    private LineDataSet getDataSet(RealmResults<InOutTransModel> modelsOut, boolean mode){
+    private PieDataSet getDataSet(RealmResults<InOutTransModel> modelsOut, boolean mode){
         List<Entry> dataList = new ArrayList<>();
         List<String> dataListLabel = new ArrayList<>();
         List<Float> nominals = new ArrayList<>();
         String setBaseDay = "0";
         int dataIndex = 7;
+
+        if(mode = true){
+
+        }
 
         //set initial
         for (int i = 0; i < 7; i++) {
@@ -153,20 +158,8 @@ public class StatistikActivity extends AppCompatActivity {
 
         xVals = dataListLabel;
 
-        int color;
-        String text;
-
-        if (mode) {
-            text = "Pemasukan";
-            color = getResources().getColor(R.color.income);
-        } else {
-            text = "Pengeluaran";
-            color = getResources().getColor(R.color.outcome);
-        }
-
-        LineDataSet dataSet = new LineDataSet(dataList, text);
-        dataSet.setColor(color);
-        dataSet.setDrawCircles(false);
+        PieDataSet dataSet = new PieDataSet(dataList, "");
+        dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
 
         return dataSet;
     }
@@ -210,15 +203,15 @@ public class StatistikActivity extends AppCompatActivity {
                 getSupportActionBar().setTitle("Statistik Pemasukan");
                 supportInvalidateOptionsMenu();
                 showMode = true;
-                createLineChart(showMode);
-                createRecViewList(separateDataInOut(showMode));
+                createPieChart(showMode);
+                //createRecViewList(separateDataInOut(showMode));
                 return true;
             case R.id.action_show_outcome :
                 getSupportActionBar().setTitle("Statistik Pengeluaran");
                 supportInvalidateOptionsMenu();
                 showMode = false;
-                createLineChart(showMode);
-                createRecViewList(separateDataInOut(showMode));
+                createPieChart(showMode);
+                //createRecViewList(separateDataInOut(showMode));
                 return true;
         }
 

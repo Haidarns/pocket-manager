@@ -17,11 +17,6 @@ import android.widget.TextView;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.util.Locale;
-
 import id.hnslabs.pocketmanager.Adapter.RecViewAdapter;
 import id.hnslabs.pocketmanager.Model.Formatter;
 import id.hnslabs.pocketmanager.Model.InOutTransModel;
@@ -168,17 +163,11 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_history) {
             // Handle the camera action
         } else if (id == R.id.nav_stats) {
-            Intent it = new Intent(MainActivity.this, StatistikActivity.class);
+            Intent it = new Intent(MainActivity.this, StatsLineActivity.class);
             startActivity(it);
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_stats_pie) {
+            Intent it = new Intent(MainActivity.this, StatsPieActivity.class);
+            startActivity(it);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
