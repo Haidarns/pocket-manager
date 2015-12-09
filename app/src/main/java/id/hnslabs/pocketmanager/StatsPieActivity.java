@@ -56,9 +56,8 @@ public class StatsPieActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle("Statistik Pemasukan");
 
-        //layoutManager = new LinearLayoutManager(this);
+        layoutManager = new LinearLayoutManager(this);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        recyclerView.setVisibility(View.GONE);
 
         chart = (PieChart) findViewById(R.id.chart_pie);
     }
@@ -67,7 +66,7 @@ public class StatsPieActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         createPieChart(showMode);
-        //createRecViewList(separateDataInOut(showMode));
+        createRecViewList(separateDataInOut(showMode));
     }
 
     private void createRecViewList(final RealmResults<InOutTransModel> results){
@@ -106,10 +105,17 @@ public class StatsPieActivity extends AppCompatActivity {
 
         data = new PieData(xVals, pds);
 
+        Legend l = chart.getLegend();
+        l.setForm(Legend.LegendForm.CIRCLE);
+
+        chart.getLegend().setWordWrapEnabled(true);
+        chart.setBackgroundColor(getResources().getColor(R.color.white));
         chart.setTouchEnabled(false);
         chart.setData(data);
         chart.animateY(1000);
         chart.setDescription(" ");
+        chart.setDrawHoleEnabled(false);
+        chart.setDrawSliceText(false);
         chart.invalidate();
     }
 
@@ -117,49 +123,53 @@ public class StatsPieActivity extends AppCompatActivity {
         List<Entry> dataList = new ArrayList<>();
         List<String> dataListLabel = new ArrayList<>();
         List<Float> nominals = new ArrayList<>();
-        String setBaseDay = "0";
-        int dataIndex = 7;
+        String[] typeLabels;
 
-        if(mode = true){
+        int[] colors = new int[]{
+                getResources().getColor(R.color.clr1),
+                getResources().getColor(R.color.clr2),
+                getResources().getColor(R.color.clr3),
+                getResources().getColor(R.color.clr4),
+                getResources().getColor(R.color.clr5),
+                getResources().getColor(R.color.clr6),
+                getResources().getColor(R.color.clr7),
+                getResources().getColor(R.color.clr8),
+                getResources().getColor(R.color.clr9),
+        };
 
+        if (mode){
+            typeLabels = getResources().getStringArray(R.array.income_str_array);
+        } else {
+            typeLabels = getResources().getStringArray(R.array.outcome_str_array);
         }
 
+        int length = typeLabels.length;
+
+
         //set initial
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < length; i++) {
             nominals.add(i,0f);
-            dataListLabel.add(i,"");
+            dataListLabel.add(i, typeLabels[i]);
         }
 
         for (int i = 0; i < modelsOut.size(); i++) {
             InOutTransModel model = modelsOut.get(i);
-            String[] formatTemp = model.getCreatedTime().split("-");
-            String[] dateTemp = formatTemp[0].split("/");
 
-            if (i < 6) {
-                if (!dateTemp[2].equals(setBaseDay)) {
-                    dataIndex -= 1;
-                    setBaseDay = dateTemp[2];
-                    nominals.set(dataIndex, model.getJumlah());
+            int type = model.getJenisInOut();
 
-                    String setDateText = dateTemp[2]+"/"+dateTemp[1];
-
-                    dataListLabel.set(dataIndex, setDateText);
-                } else {
-                    float tmpF = nominals.get(dataIndex);
-                    tmpF += model.getJumlah();
-                    nominals.set(dataIndex, tmpF);
-                }
-            }
+            float tmpF = nominals.get(type);
+            tmpF += model.getJumlah();
+            nominals.set(type, tmpF);
         }
 
-        for (int i = 0; i <7 ; i++) {
+        for (int i = 0; i < length ; i++) {
             dataList.add(new Entry(nominals.get(i), i));
         }
 
         xVals = dataListLabel;
 
         PieDataSet dataSet = new PieDataSet(dataList, "");
-        dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+        dataSet.setColors(colors);
 
         return dataSet;
     }
@@ -170,13 +180,9 @@ public class StatsPieActivity extends AppCompatActivity {
                 .equalTo("inOut", mode)
                 .findAll();
 
-        results.sort("id",false);
+        results.sort(new String[]{"jenisInOut","id"}, new boolean[]{true, true});
 
         return results;
-    }
-
-    private void separateDay(){
-
     }
 
     @Override
@@ -204,14 +210,14 @@ public class StatsPieActivity extends AppCompatActivity {
                 supportInvalidateOptionsMenu();
                 showMode = true;
                 createPieChart(showMode);
-                //createRecViewList(separateDataInOut(showMode));
+                createRecViewList(separateDataInOut(showMode));
                 return true;
             case R.id.action_show_outcome :
                 getSupportActionBar().setTitle("Statistik Pengeluaran");
                 supportInvalidateOptionsMenu();
                 showMode = false;
                 createPieChart(showMode);
-                //createRecViewList(separateDataInOut(showMode));
+                createRecViewList(separateDataInOut(showMode));
                 return true;
         }
 

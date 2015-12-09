@@ -111,18 +111,16 @@ public class StatsLineActivity extends AppCompatActivity {
 
                 String mataUang = "Rp ";
 
-                return mataUang+df.format(v);
+                return mataUang + df.format(v);
             }
         });
 
         data = new LineData(xVals, lds);
 
+        chart.setBackgroundColor(getResources().getColor(R.color.white));
         chart.getAxisLeft().setDrawLabels(false);
         chart.getAxisRight().setDrawLabels(false);
-
-        Legend legend = chart.getLegend();
-        legend.setEnabled(false);
-
+        chart.getLegend().setEnabled(false);
         chart.setTouchEnabled(false);
         chart.setDragEnabled(false);
         chart.setPinchZoom(false);

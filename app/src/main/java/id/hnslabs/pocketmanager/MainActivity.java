@@ -2,6 +2,7 @@ package id.hnslabs.pocketmanager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,9 +14,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+
+import java.io.File;
+import java.io.IOException;
 
 import id.hnslabs.pocketmanager.Adapter.RecViewAdapter;
 import id.hnslabs.pocketmanager.Model.Formatter;
@@ -25,7 +30,6 @@ import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    //DBHelper db;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -33,6 +37,11 @@ public class MainActivity extends AppCompatActivity
     private TextView balanceTV;
 
     private RealmResults<InOutTransModel> results;
+
+    private final byte[] key = new byte[64];
+
+    private final File sdCard = Environment.getExternalStorageDirectory();
+    private final File dir = new File (sdCard.getAbsolutePath() + "/RealmDB");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,6 +177,27 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_stats_pie) {
             Intent it = new Intent(MainActivity.this, StatsPieActivity.class);
             startActivity(it);
+        } else if (id == R.id.nav_backup){
+            Realm realm = Realm.getInstance(MainActivity.this);
+
+            dir.mkdirs();
+            File exportRealmFile = new File(dir, "db.pcm");
+
+            try {
+                // if "db.pcm" already exists, delete
+                exportRealmFile.delete();
+
+                // copy current realm to "db.pcm"
+                realm.writeEncryptedCopyTo(exportRealmFile, key);
+
+                Toast.makeText(MainActivity.this, key.toString(), Toast.LENGTH_SHORT).show();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                Log.i("Save backup", "success");
+            }
+            realm.close();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

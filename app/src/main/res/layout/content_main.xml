@@ -40,12 +40,13 @@
 
     </RelativeLayout>
     <android.support.v7.widget.RecyclerView
+        android:paddingTop="3dp"
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
         android:requiresFadingEdge="vertical"
-        android:fadingEdgeLength="10dp"
+        android:fadingEdgeLength="7dp"
         android:background="#e0e0e0"
         />
 </LinearLayout>

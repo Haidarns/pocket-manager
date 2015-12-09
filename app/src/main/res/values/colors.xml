@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- color for pie chart -->
+    <color name="clr1" >#6200EA</color>
+    <color name="clr2" >#0091EA</color>
+    <color name="clr3" >#FFD600</color>
+    <color name="clr4" >#C51162</color>
+    <color name="clr5" >#00BFA5</color>
+    <color name="clr6" >#3E2723</color>
+    <color name="clr7" >#AA00FF</color>
+    <color name="clr8" >#2962FF</color>
+    <color name="clr9" >#FF6D00</color>
+
+    <!-- color for app -->
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF9800</color>
