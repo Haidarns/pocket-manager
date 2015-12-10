@@ -29,6 +29,7 @@ import id.hnslabs.pocketmanager.Adapter.RecViewAdapter;
 import id.hnslabs.pocketmanager.Model.InOutTransModel;
 import io.realm.Realm;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 public class StatsLineActivity extends AppCompatActivity {
     private boolean showMode = true; //true = income, false = outcome
@@ -196,7 +197,7 @@ public class StatsLineActivity extends AppCompatActivity {
                 .equalTo("inOut", mode)
                 .findAll();
 
-        results.sort("id",false);
+        results.sort("id", Sort.DESCENDING);
 
         return results;
     }

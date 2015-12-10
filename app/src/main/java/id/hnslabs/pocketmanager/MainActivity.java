@@ -1,6 +1,7 @@
 package id.hnslabs.pocketmanager;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,13 +21,18 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import id.hnslabs.pocketmanager.Adapter.RecViewAdapter;
 import id.hnslabs.pocketmanager.Model.Formatter;
 import id.hnslabs.pocketmanager.Model.InOutTransModel;
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -98,7 +104,7 @@ public class MainActivity extends AppCompatActivity
     private RealmResults<InOutTransModel> getAllData(){
         Realm realm = Realm.getInstance(getApplicationContext());
         RealmResults<InOutTransModel> tmpData = realm.where(InOutTransModel.class).findAll();
-        tmpData.sort("id", true);
+        tmpData.sort("id", Sort.ASCENDING);
         return tmpData;
     }
 
@@ -153,6 +159,63 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    private void readRealmFile(){
+        String uri = dir.toString()+"/db.pcm";
+
+        File f = new File(uri);
+
+        InputStream fIn = null;
+
+        try {
+            fIn = new FileInputStream(f);
+            Toast.makeText(MainActivity.this, "Sukses membuka file", Toast.LENGTH_SHORT).show();
+        } catch (Exception e){
+            Toast.makeText(MainActivity.this, "Gagal membuka file", Toast.LENGTH_SHORT).show();
+        }
+
+        Log.i("File", f.toString());
+        copyBundledRealmFile(fIn, "default99");
+
+        RealmConfiguration config = new RealmConfiguration.Builder(this)
+                .name("default99")
+                .encryptionKey(key)
+                .build();
+
+        Realm realm = Realm.getInstance(config);
+        showStatus(realm);
+        realm.close();
+    }
+
+    private String copyBundledRealmFile(InputStream inputStream, String outFileName) {
+        try {
+            File file = new File(this.getFilesDir(), outFileName);
+            FileOutputStream outputStream = new FileOutputStream(file);
+            byte[] buf = new byte[64];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buf)) > 0) {
+                outputStream.write(buf, 0, bytesRead);
+            }
+            outputStream.close();
+            return file.getAbsolutePath();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private String realmString(Realm realm) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (InOutTransModel iotm : realm.allObjects(InOutTransModel.class)) {
+            stringBuilder.append(iotm.toString()).append("\n");
+        }
+
+        return (stringBuilder.length() == 0) ? "<data was deleted>" : stringBuilder.toString();
+    }
+
+    private void showStatus(Realm realm) {
+        Toast.makeText(MainActivity.this, realmString(realm) , Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -188,7 +251,7 @@ public class MainActivity extends AppCompatActivity
                 exportRealmFile.delete();
 
                 // copy current realm to "db.pcm"
-                realm.writeEncryptedCopyTo(exportRealmFile, key);
+                realm.writeEncryptedCopyTo(exportRealmFile,key);
 
                 Toast.makeText(MainActivity.this, key.toString(), Toast.LENGTH_SHORT).show();
 
@@ -198,6 +261,8 @@ public class MainActivity extends AppCompatActivity
                 Log.i("Save backup", "success");
             }
             realm.close();
+        } else if (id == R.id.nav_restore){
+            readRealmFile();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

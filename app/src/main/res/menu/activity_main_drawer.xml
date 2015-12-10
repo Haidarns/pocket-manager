@@ -18,5 +18,9 @@
             android:id="@+id/nav_backup"
             android:icon="@drawable/ic_sd_storage"
             android:title="Backup Database (Experimental)" />
+        <item
+            android:id="@+id/nav_restore"
+            android:icon="@drawable/ic_file_attach"
+            android:title="Restore Database (Experimental)" />
     </group>
 </menu>
