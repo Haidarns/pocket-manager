@@ -1,9 +1,11 @@
 package id.hnslabs.pocketmanager;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
@@ -19,6 +21,7 @@ import java.text.DecimalFormat;
 import java.util.Calendar;
 
 import id.hnslabs.pocketmanager.Model.InOutTransModel;
+import id.hnslabs.pocketmanager.Model.RealmConfig;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -27,7 +30,7 @@ public class EditActivity extends AppCompatActivity {
     public static final boolean PENGELUARAN = false;
     public static final boolean TAMBAH = true;
     public static final boolean LIHAT = false;
-    private boolean actMode, addMode;
+    private boolean actMode, actMode2, addMode;
     private EditText editNominal, editKet;
     private Spinner typeSpinIn, typeSpinOut;
     private SharedPreferences sharedpreferences;
@@ -42,6 +45,7 @@ public class EditActivity extends AppCompatActivity {
 
         addMode = getIntent().getBooleanExtra("addMode",PEMASUKAN);
         actMode = getIntent().getBooleanExtra("actMode",LIHAT);
+        actMode2 = actMode;
         sharedpreferences = getSharedPreferences("PocManPref", Context.MODE_PRIVATE);
 
         editNominal = (EditText) findViewById(R.id.input_nom);
@@ -96,7 +100,7 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private InOutTransModel getData(int id){
-        Realm realm = Realm.getInstance(getApplicationContext());
+        Realm realm = Realm.getInstance(new RealmConfig(this,"datas").getConfig());
         return realm.where(InOutTransModel.class).equalTo("id",id).findFirst();
     }
 
@@ -121,7 +125,7 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void deleteData(int id){
-        Realm realm = Realm.getInstance(getApplicationContext());
+        Realm realm = Realm.getInstance(new RealmConfig(this,"datas").getConfig());
         realm.beginTransaction();
         InOutTransModel modelS = realm.where(InOutTransModel.class).equalTo("id",id).findFirst();
         modelS.removeFromRealm();
@@ -157,7 +161,7 @@ public class EditActivity extends AppCompatActivity {
                 deleteData(idPrev);
             }
 
-            Realm realm = Realm.getInstance(this);
+            Realm realm = Realm.getInstance(new RealmConfig(this,"datas").getConfig());
             realm.beginTransaction();
             modelS = realm.createObject(InOutTransModel.class);
             modelS.setId(idPrev);
@@ -170,10 +174,39 @@ public class EditActivity extends AppCompatActivity {
             realm.close();
             //db.inputData(model);
 
-            Toast.makeText(EditActivity.this, "Sukses menambahkan data.", Toast.LENGTH_SHORT).show();
+            String strMsg;
+
+            if(actMode2) {
+                strMsg = "Berhasil menambahkan data.";
+            } else {
+                strMsg = "Berhasil mengubah data.";
+            }
+
+            Toast.makeText(EditActivity.this, strMsg, Toast.LENGTH_SHORT).show();
 
             finish();
         }
+    }
+
+    private void alertBox(Context context){
+        new AlertDialog.Builder(context)
+                .setTitle("Hapus Data")
+                .setMessage("Apakah anda yakin ingin menghapus data ini?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteData(model.getId());
+                        finish();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     @Override
@@ -205,8 +238,7 @@ public class EditActivity extends AppCompatActivity {
                 supportInvalidateOptionsMenu();
                 return true;
             case R.id.action_delete :
-                deleteData(model.getId());
-                finish();
+                alertBox(EditActivity.this);
                 return true;
         }
 

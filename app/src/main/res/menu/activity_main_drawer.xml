@@ -14,13 +14,15 @@
             android:id="@+id/nav_stats_pie"
             android:icon="@drawable/ic_chart_pie"
             android:title="Statistik Kategori" />
-        <item
+
+        <!-- disabled feature, can cause app freeze, still dont have any idea to fix it-->
+        <!--item
             android:id="@+id/nav_backup"
             android:icon="@drawable/ic_sd_storage"
             android:title="Backup Database (Experimental)" />
         <item
             android:id="@+id/nav_restore"
             android:icon="@drawable/ic_file_attach"
-            android:title="Restore Database (Experimental)" />
+            android:title="Restore Database (Experimental)" /-->
     </group>
 </menu>

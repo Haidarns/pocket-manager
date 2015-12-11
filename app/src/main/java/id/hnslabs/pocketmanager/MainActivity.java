@@ -1,5 +1,6 @@
 package id.hnslabs.pocketmanager;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import java.io.InputStream;
 import id.hnslabs.pocketmanager.Adapter.RecViewAdapter;
 import id.hnslabs.pocketmanager.Model.Formatter;
 import id.hnslabs.pocketmanager.Model.InOutTransModel;
+import id.hnslabs.pocketmanager.Model.RealmConfig;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private RealmResults<InOutTransModel> getAllData(){
-        Realm realm = Realm.getInstance(getApplicationContext());
+        Realm realm = Realm.getInstance(new RealmConfig(this,"datas").getConfig());
         RealmResults<InOutTransModel> tmpData = realm.where(InOutTransModel.class).findAll();
         tmpData.sort("id", Sort.ASCENDING);
         return tmpData;
@@ -174,26 +176,31 @@ public class MainActivity extends AppCompatActivity
         }
 
         Log.i("File", f.toString());
-        copyBundledRealmFile(fIn, "default99");
+        copyBundledRealmFile(fIn, "datas");
 
-        RealmConfiguration config = new RealmConfiguration.Builder(this)
-                .name("default99")
-                .encryptionKey(key)
-                .build();
+        Realm realmImp = Realm.getInstance(new RealmConfig(this,"datas").getConfig());
+        //Realm realm = Realm.getInstance(MainActivity.this);
 
-        Realm realm = Realm.getInstance(config);
-        showStatus(realm);
-        realm.close();
+        RealmResults<InOutTransModel> a = realmImp.where(InOutTransModel.class).findAll();
+        a.sort("id", Sort.ASCENDING);
+
+        for (int i = 0; i < a.size(); i++) {
+            Log.i("Realm Import",String.valueOf(a.get(i).getId()));
+        }
+
+        //realm.copyToRealmOrUpdate();
+        showStatus(realmImp);
+        realmImp.close();
     }
 
     private String copyBundledRealmFile(InputStream inputStream, String outFileName) {
         try {
             File file = new File(this.getFilesDir(), outFileName);
             FileOutputStream outputStream = new FileOutputStream(file);
-            byte[] buf = new byte[64];
+            byte[] buf = new byte[0];
             int bytesRead;
             while ((bytesRead = inputStream.read(buf)) > 0) {
-                outputStream.write(buf, 0, bytesRead);
+                outputStream.write(bytesRead);
             }
             outputStream.close();
             return file.getAbsolutePath();
@@ -240,8 +247,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_stats_pie) {
             Intent it = new Intent(MainActivity.this, StatsPieActivity.class);
             startActivity(it);
-        } else if (id == R.id.nav_backup){
-            Realm realm = Realm.getInstance(MainActivity.this);
+        } /* disable the feature, because can cause freeze to the app. Still haven't any idea to fix it
+        else if (id == R.id.nav_backup){
+            Realm realm = Realm.getInstance(new RealmConfig(this,"datas").getConfig());
 
             dir.mkdirs();
             File exportRealmFile = new File(dir, "db.pcm");
@@ -251,7 +259,8 @@ public class MainActivity extends AppCompatActivity
                 exportRealmFile.delete();
 
                 // copy current realm to "db.pcm"
-                realm.writeEncryptedCopyTo(exportRealmFile,key);
+                //realm.writeEncryptedCopyTo(exportRealmFile,key);
+                realm.writeCopyTo(exportRealmFile);
 
                 Toast.makeText(MainActivity.this, key.toString(), Toast.LENGTH_SHORT).show();
 
@@ -263,7 +272,7 @@ public class MainActivity extends AppCompatActivity
             realm.close();
         } else if (id == R.id.nav_restore){
             readRealmFile();
-        }
+        }*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

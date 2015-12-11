@@ -28,6 +28,7 @@ import java.util.List;
 
 import id.hnslabs.pocketmanager.Adapter.RecViewAdapter;
 import id.hnslabs.pocketmanager.Model.InOutTransModel;
+import id.hnslabs.pocketmanager.Model.RealmConfig;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
@@ -51,7 +52,7 @@ public class StatsPieActivity extends AppCompatActivity {
         LineChart lc = (LineChart) findViewById(R.id.chart);
         lc.setVisibility(View.GONE);
 
-        realm = Realm.getInstance(getApplicationContext());
+        realm = Realm.getInstance(new RealmConfig(this,"datas").getConfig());
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
